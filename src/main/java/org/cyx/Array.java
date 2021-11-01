@@ -42,11 +42,36 @@ public class Array {
          * 26. 删除有序数组中的重复项
          * 给你一个有序数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次 ，返回删除后数组的新长度。
          * 不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
-         * @since
+         * @sin
          * @end
          */
         int[] nums26 = new int[]{0};
         System.out.println(new RemoveDuplicates().removeDuplicates(nums26));
+
+        printTitle("62. 不同路径");
+        /**
+         * 62. 不同路径
+         * 一个机器人位于一个 m x n网格的左上角 （起始点在下图中标记为 “Start” ）。
+         * 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+         * 问总共有多少条不同的路径？
+         * @sin 2021.11.01 23:53
+         * @end 2021.11.02 00：12
+         */
+        System.out.println(new UniquePaths().uniquePaths(3, 7));
+
+        printTitle("63. 不同路径 II");
+        /**
+         * 63. 不同路径 II
+         * 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+         * 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+         * 现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+         * 网格中的障碍物和空位置分别用 1 和 0 来表示。
+         * @sin 2021.11.02 00：15
+         * @end 2021.11.02 00：29
+         */
+        int[][] obstacleGrid631 = new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}};
+        int[][] obstacleGrid632 = new int[][]{{0, 1, 0}, {1, 0, 0}, {0, 0, 0}};
+        System.out.println(new UniquePathsWithObstacles().uniquePathsWithObstacles(obstacleGrid632));
 
         printTitle("66. 加一");
         /**
@@ -59,6 +84,8 @@ public class Array {
          */
         int[] digits66 = new int[]{9, 9, 9, 9};
         Arrays.stream(new PlusOne().plusOne(digits66)).forEach(System.out::println);
+
+
     }
 
     static void printTitle(String title) {
@@ -115,6 +142,55 @@ class RemoveDuplicates {
             }
         }
         return l + 1;
+    }
+}
+
+// 62. 不同的路径
+class UniquePaths {
+    public int uniquePaths(int m, int n) {
+        int[][] path = new int[m][n];
+        for (int i = 0; i < m; ++i) {
+            path[i][0] = 1;
+        }
+        for (int j = 0; j < n; ++j) {
+            path[0][j] = 1;
+        }
+        for (int i = 1; i < m; ++i) {
+            for (int j = 1; j < n; ++j) {
+                path[i][j] = path[i - 1][j] + path[i][j - 1];
+            }
+        }
+        return path[m - 1][n - 1];
+    }
+}
+
+// 62. 不同的路径
+class UniquePathsWithObstacles {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int r = obstacleGrid.length;
+        int c = obstacleGrid[0].length;
+        int[][] path = new int[r][c];
+        for (int i = 0; i < r; ++i) {
+            if (obstacleGrid[i][0] == 1) {
+                break;
+            }
+            path[i][0] = 1;
+        }
+        for (int j = 0; j < c; j++) {
+            if (obstacleGrid[0][j] == 1) {
+                break;
+            }
+            path[0][j] = 1;
+        }
+        for (int i = 1; i < r; ++i) {
+            for (int j = 1; j < c; ++j) {
+                if (obstacleGrid[i][j] == 1) {
+                    continue;
+                }
+                path[i][j] = path[i - 1][j] + path[i][j - 1];
+            }
+        }
+        return path[r - 1][c - 1];
     }
 }
 
