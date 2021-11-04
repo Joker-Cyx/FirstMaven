@@ -1,5 +1,7 @@
 package org.cyx;
 
+import org.cyx.util.PrintUtil;
+
 import java.util.Arrays;
 
 public class Array {
@@ -33,7 +35,7 @@ public class Array {
          * @sin 2021.10.28 23:27
          * @end 2021.10.29 00:19
          */
-        printTitle("11. 盛最多水的容器");
+        PrintUtil.printTitle("11. 盛最多水的容器");
         int[] height11 = new int[]{1, 8, 6, 2, 5, 4, 8, 3, 7};
         System.out.println(new MaxArea().maxArea(height11));
 
@@ -44,7 +46,7 @@ public class Array {
          * @sin
          * @end
          */
-        printTitle("26. 删除有序数组中的重复项");
+        PrintUtil.printTitle("26. 删除有序数组中的重复项");
         int[] nums26 = new int[]{0};
         System.out.println(new RemoveDuplicates().removeDuplicates(nums26));
 
@@ -57,7 +59,7 @@ public class Array {
          * @sin 2021.11.02 23:50
          * @end 2021.11.03 00:26
          */
-        printTitle("45. 跳跃游戏 II");
+        PrintUtil.printTitle("45. 跳跃游戏 II");
         int[] nums451 = new int[]{2, 3, 1, 1, 4};
         int[] nums452 = new int[]{2, 3, 0, 1, 4};
         System.out.println(new Jump().jump(nums451));
@@ -70,7 +72,7 @@ public class Array {
          * @sin 2021.11.02 23:25
          * @end 2021.11.02 23:44
          */
-        printTitle("55. 跳跃游戏");
+        PrintUtil.printTitle("55. 跳跃游戏");
         int[] nums551 = new int[]{3, 2, 1, 0, 1};
         int[] nums552 = new int[]{2, 3, 1, 1, 4};
         System.out.println(new CanJump().canJump(nums551));
@@ -84,7 +86,7 @@ public class Array {
          * @sin 2021.11.01 23:53
          * @end 2021.11.02 00：12
          */
-        printTitle("62. 不同路径");
+        PrintUtil.printTitle("62. 不同路径");
         System.out.println(new UniquePaths().uniquePaths(3, 7));
 
         /**
@@ -97,7 +99,7 @@ public class Array {
          * @sin 2021.11.02 00：15
          * @end 2021.11.02 00：29
          */
-        printTitle("63. 不同路径 II");
+        PrintUtil.printTitle("63. 不同路径 II");
         int[][] obstacleGrid631 = new int[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}};
         int[][] obstacleGrid632 = new int[][]{{0, 1, 0}, {1, 0, 0}, {0, 0, 0}};
         System.out.println(new UniquePathsWithObstacles().uniquePathsWithObstacles(obstacleGrid632));
@@ -110,27 +112,13 @@ public class Array {
          * @sin
          * @end
          */
-        printTitle("66. 加一");
+        PrintUtil.printTitle("66. 加一");
         int[] digits66 = new int[]{9, 9, 9, 9};
         Arrays.stream(new PlusOne().plusOne(digits66)).forEach(System.out::println);
 
 
     }
 
-    // help print title
-    static void printTitle(String title) {
-        int len = title.length();
-        int left = (118 - len) / 2;
-        int right = 118 - len - left;
-        while (left-- > 0) {
-            System.out.printf("*");
-        }
-        System.out.printf(" " + title + " ");
-        while (right-- > 0) {
-            System.out.printf("*");
-        }
-        System.out.println();
-    }
 }
 
 // 11. 盛最多水的容器
