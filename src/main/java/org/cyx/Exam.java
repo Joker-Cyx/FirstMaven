@@ -11,7 +11,7 @@ public class Exam {
          * 字符串解压缩
          * String.indexOf()
          * String.lastIndexOf(int, fromIdx);
-         * String.replace(tar, rep);
+         * String s = String.replace(tar, rep);
          * String[] s = String.split(rgx);
          */
         PrintUtil.printTitle("字符串解压缩");
@@ -19,8 +19,6 @@ public class Exam {
         System.out.println(new Compress().compress(words));
     }
 }
-
-
 
 class Compress {
     /**
