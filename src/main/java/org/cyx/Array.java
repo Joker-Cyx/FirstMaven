@@ -2,7 +2,7 @@ package org.cyx;
 
 import org.cyx.util.PrintUtil;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Array {
 
@@ -116,6 +116,17 @@ public class Array {
         int[] digits66 = new int[]{9, 9, 9, 9};
         Arrays.stream(new PlusOne().plusOne(digits66)).forEach(System.out::println);
 
+        /**
+         * 239. 滑动窗口最大值
+         * 给你一个整数数组 nums，有一个大小为k的滑动窗口从数组的最左侧移动到数组的最右侧。
+         * 你只可以看到在滑动窗口内的 k个数字。滑动窗口每次只向右移动一位。
+         * 返回滑动窗口中的最大值。
+         * @sin 2021.11.11 00:00
+         * @end 2021.11.11 00:
+         */
+        PrintUtil.printTitle("239. 滑动窗口最大值");
+        int[] nums239 = new int[]{1, 3, -1, -3, 5, 3, 6, 7};
+        Arrays.stream(new MaxSlidingWindow().maxSlidingWindow(nums239, 3)).forEach(System.out::println);
 
     }
 
@@ -259,5 +270,36 @@ class PlusOne {
         digits = new int[digits.length + 1];
         digits[0] = 1;
         return digits;
+    }
+}
+
+// 239. 滑动窗口最大值
+class MaxSlidingWindow {
+    Deque<Integer> maxQue = new LinkedList<>();
+
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        int[] ret = new int[nums.length - k + 1];
+        int l = 0;
+
+        for (int i = 0; i < k - 1; i++) {
+            addQue(maxQue, nums[i]);
+        }
+
+        for (int i = k - 1; i < nums.length; i++) {
+            addQue(maxQue, nums[i]);
+            if (nums[i - k + 1] != maxQue.getFirst()) {
+                ret[l++] = maxQue.getFirst();
+            } else {
+                ret[l++] = maxQue.pollFirst();
+            }
+        }
+        return ret;
+    }
+
+    private void addQue(Deque<Integer> deque, int val) {
+        while (!deque.isEmpty() && deque.getLast() < val) {
+            deque.pollLast();
+        }
+        deque.add(val);
     }
 }
