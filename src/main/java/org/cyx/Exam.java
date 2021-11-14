@@ -19,11 +19,27 @@ public class Exam {
         System.out.println(new Compress().compress(words));
 
         /**
-         * 10.22 最便宜往返机票（专业级第3题）
+         * 10.22 - 1 子字符串个数
+         * 字符串 A 和 B，求 A 中包含 B 所有字符的子字符串的个数
+         * 例如：012345678
+         *      DABCDEABC & ABC
+         * 输出：f(0) + f(1) + f(2) + f(3) + f(4) + f(5) + f(6) + f(7) + f(8)
+         *      6    + 6    + 3    + 2    + 1    + 1    + 1    + 0    + 0
+         *     =20
+         * @sin 2021.10.15 00:00
+         * @end 2021.10.15 01:00
+         */
+        PrintUtil.printTitle("10.22-1 子字符串个数");
+        String str10221_1 = "DABCDEABC";
+        String str10221_2 = "ABCC";
+        System.out.println(new SubStr().subStr(str10221_1, str10221_2));
+
+        /**
+         * 10.22 - 3 最便宜往返机票（专业级第3题）
          * @sin 2021.11.13 23:40
          * @end 2021.11.14 01:05
          */
-        PrintUtil.printTitle("10.22 最便宜往返机票（专业级第3题）");
+        PrintUtil.printTitle("10.22-3 最便宜往返机票（专业级第3题）");
         int[] goArr = new int[]{3, 2, 1, 2, 3};
         int[] rtArr = new int[]{1, 2, 3, 2, 1};
         Arrays.stream(new CheapestTicket().cheapestTicket(goArr, rtArr, 1, 1)).forEach(System.out::println);
@@ -46,9 +62,59 @@ class Compress {
             String[] s = subStr.split("\\|");
             int times = Integer.parseInt(s[0]);
             words = words.replace(words.substring(left, right + 1),
-                    String.join("", Collections.nCopies(times, s[1]))) ;
+                    String.join("", Collections.nCopies(times, s[1])));
         }
         return words;
+    }
+}
+
+// 1022 -1 子字符串个数
+class SubStr {
+    public long subStr(String messages, String keys) {
+        // window：实时记录当前子串中各个字符的个数
+        Map<Character, Integer> window = new HashMap<>();
+        // 记录keys 中各个字符的个数
+        Map<Character, Integer> pattern = new HashMap<>();
+        for (int i = 0; i < keys.length(); i++) {
+            if (pattern.get(keys.charAt(i)) == null) {
+                pattern.put(keys.charAt(i), 1);
+            } else {
+                pattern.put(keys.charAt(i), pattern.get(keys.charAt(i)) + 1);
+            }
+        }
+        long res = 0;
+        // i, j：左右窗
+        int i = 0;
+        int j = 0;
+        while (i <messages.length() && j < messages.length()) {
+            while (!match(window, pattern) && j < messages.length()) {
+                if (window.get(messages.charAt(j)) == null) {
+                    window.put(messages.charAt(j), 1);
+                } else {
+                    window.put(messages.charAt(j), window.get(messages.charAt(j)) + 1);
+                }
+                j++;
+            }
+            while (match(window, pattern) && i < messages.length()) {
+                res += messages.length() - j + 1;
+                window.put(messages.charAt(i), window.get(messages.charAt(i)) - 1);
+                i++;
+            }
+        }
+        return res;
+    }
+
+    private boolean match(Map<Character, Integer> window, Map<Character, Integer> pattern) {
+        if (window.isEmpty()) {
+            return false;
+        }
+        for (Map.Entry<Character, Integer> entry : pattern.entrySet()) {
+            // 一旦当前子串window中不包含keys中的字符，则不匹配
+            if (window.get(entry.getKey()) == null || window.get(entry.getKey()) == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
