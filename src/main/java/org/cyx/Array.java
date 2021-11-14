@@ -275,6 +275,7 @@ class PlusOne {
 
 // 239. 滑动窗口最大值
 class MaxSlidingWindow {
+
     Deque<Integer> maxQue = new LinkedList<>();
 
     public int[] maxSlidingWindow(int[] nums, int k) {

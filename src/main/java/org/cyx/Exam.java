@@ -17,11 +17,17 @@ public class Exam {
         PrintUtil.printTitle("字符串解压缩");
         String words = "[10|[2|AB][2|AB]]";
         System.out.println(new Compress().compress(words));
+
+        /**
+         * 10.22 最便宜往返机票（专业级第3题）
+         * @sin 2021.11.13 23:40
+         * @end 2021.11.14 01:05
+         */
+        PrintUtil.printTitle("10.22 最便宜往返机票（专业级第3题）");
+        int[] goArr = new int[]{3, 2, 1, 2, 3};
+        int[] rtArr = new int[]{1, 2, 3, 2, 1};
+        Arrays.stream(new CheapestTicket().cheapestTicket(goArr, rtArr, 1, 1)).forEach(System.out::println);
     }
-
-
-
-
 }
 
 class Compress {
@@ -99,4 +105,51 @@ class BookinSystem {
 //            if (canBookLa)
 //        }
 //    }
+}
+
+// 1022 - 3 最便宜往返机票
+class CheapestTicket {
+    public int[] cheapestTicket(int[] goArr, int[] rtArr, int minDays, int maxDays) {
+        // 停留的第min & max天之间的最便宜的返程机票的【坐标】
+        int[] minRtTicInMinMaxDay = new int[goArr.length];
+        int i;
+        int k = minDays;
+        Deque<Integer> minRtTic = new LinkedList<>();
+        // 寻找minRtTicInMinMaxDay
+        for (i = minDays; i <= maxDays; i++) {
+            while (!minRtTic.isEmpty() && rtArr[minRtTic.getLast()] > rtArr[i]) {
+                minRtTic.pollLast();
+            }
+            minRtTic.addLast(i);
+        }
+        minRtTicInMinMaxDay[k] = minRtTic.getFirst();
+        for (; i < goArr.length; i++) {
+            if (rtArr[k] == rtArr[minRtTic.getFirst()]) {
+                minRtTic.pollFirst();
+            }
+            while (!minRtTic.isEmpty() && rtArr[minRtTic.getLast()] > rtArr[i]) {
+                minRtTic.pollLast();
+            }
+            minRtTic.addLast(i);
+            minRtTicInMinMaxDay[++k] = minRtTic.getFirst();
+        }
+        while (i < goArr.length + maxDays - minDays) {
+            if (minRtTic.getFirst() == k) {
+                minRtTic.pollFirst();
+            }
+            minRtTicInMinMaxDay[++k] = minRtTic.getFirst();
+            i++;
+        }
+        //
+        int minCost = Integer.MAX_VALUE;
+        int[] rt = new int[2];
+        for (int j = 0; j < goArr.length - minDays; j++) {
+            int cost = goArr[j] + rtArr[minRtTicInMinMaxDay[j + minDays]];
+            if (cost < minCost) {
+                minCost = cost;
+                rt = new int[]{j, minRtTicInMinMaxDay[j + minDays]};
+            }
+        }
+        return rt;
+    }
 }
