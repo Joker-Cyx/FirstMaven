@@ -19,7 +19,16 @@ public class Exam {
         System.out.println(new Compress().compress(words));
 
         /**
-         * 10.22 - 1 子字符串个数
+         * 07.23-1 展厅合适人数上限
+         * 总预约人数上限，以及各展厅预约人数。设置一个上限，使得总预约人数小于total
+         */
+        PrintUtil.printTitle("07.23-1 展厅合适人数上限");
+        int max0723 = 4;
+        int[] nums = new int[]{1, 2, 3, 4, 5};
+        System.out.println(new MaxLimit().maxLimit(max0723, nums));
+
+        /**
+         * 10.22-1 子字符串个数
          * 字符串 A 和 B，求 A 中包含 B 所有字符的子字符串的个数
          * 例如：012345678
          *      DABCDEABC & ABC
@@ -35,7 +44,7 @@ public class Exam {
         System.out.println(new SubStr().subStr(str10221_1, str10221_2));
 
         /**
-         * 10.22 - 3 最便宜往返机票（专业级第3题）
+         * 10.22-3 最便宜往返机票（专业级第3题）
          * @sin 2021.11.13 23:40
          * @end 2021.11.14 01:05
          */
@@ -68,7 +77,52 @@ class Compress {
     }
 }
 
-// 1022 -1 子字符串个数
+// 0723 - 1 展厅合适人数上限
+class MaxLimit {
+    public int maxLimit(int maxTotal, int[] nums) {
+        int maxSingle = Integer.MIN_VALUE;
+        int minSingle = Integer.MAX_VALUE;
+        int total = 0;
+        for (int v : nums) {
+            total += v;
+            maxSingle = Math.max(v, maxSingle);
+            minSingle = Math.min(v, minSingle);
+        }
+        if (total <= maxTotal) {
+            return maxSingle;
+        }
+        int r = (minSingle + maxSingle) / 2;
+        int l = minSingle;
+        int threshold = r;
+        while (l < r) {
+            int sum = calSum(threshold, nums);
+            if (sum > maxTotal) {
+                r = (r + l) / 2;
+                threshold = r;
+            } else if (sum < maxSingle) {
+                l = (r + l) / 2;
+                threshold = l;
+            } else {
+                return threshold;
+            }
+        }
+        return calSum(l, nums) > maxTotal ? 0 : l;
+    }
+
+    private int calSum(int threshold, int[] nums) {
+        int sum = 0;
+        for (int v : nums) {
+            if (v > threshold) {
+                sum += threshold;
+            } else {
+                sum += v;
+            }
+        }
+        return sum;
+    }
+}
+
+// 1022 - 1 子字符串个数
 class SubStr {
     public long subStr(String messages, String keys) {
         // window：实时记录当前子串中各个字符的个数
