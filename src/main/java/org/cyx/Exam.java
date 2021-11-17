@@ -21,6 +21,8 @@ public class Exam {
         /**
          * 07.23-1 展厅合适人数上限
          * 总预约人数上限，以及各展厅预约人数。设置一个上限，使得总预约人数小于total
+         * @sin 2021.11.17 00:00
+         * @end 2021.11.17 01:10
          */
         PrintUtil.printTitle("07.23-1 展厅合适人数上限");
         int max0723 = 4;
@@ -112,11 +114,7 @@ class MaxLimit {
     private int calSum(int threshold, int[] nums) {
         int sum = 0;
         for (int v : nums) {
-            if (v > threshold) {
-                sum += threshold;
-            } else {
-                sum += v;
-            }
+            sum += Math.min(v, threshold);
         }
         return sum;
     }

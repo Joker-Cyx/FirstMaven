@@ -117,6 +117,34 @@ public class Array {
         Arrays.stream(new PlusOne().plusOne(digits66)).forEach(System.out::println);
 
         /**
+         * 200. 岛屿数量
+         * 给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+         * @sin 2021.11.17 22:55
+         * @end 2021.11.17 23:25
+         */
+        PrintUtil.printTitle("200. 岛屿数量");
+        char[][] grid200_1 = new char[][]{
+                {'1', '1', '1', '1', '0'},
+                {'1', '1', '0', '1', '0'},
+                {'1', '1', '0', '0', '0'},
+                {'0', '0', '0', '0', '0'}
+        };
+        char[][] grid200_2 = new char[][]{
+                {'1', '1', '0', '0', '0'},
+                {'1', '1', '0', '0', '0'},
+                {'0', '0', '1', '0', '0'},
+                {'0', '0', '0', '1', '1'}
+        };
+        char[][] grid200_3 = new char[][]{
+                {'1', '1', '1'},
+                {'0', '1', '0'},
+                {'1', '1', '1'}
+        };
+        System.out.println(new NumIslands().numIslands(grid200_1));
+        System.out.println(new NumIslands().numIslands(grid200_2));
+        System.out.println(new NumIslands().numIslands(grid200_3));
+
+        /**
          * 239. 滑动窗口最大值
          * 给你一个整数数组 nums，有一个大小为k的滑动窗口从数组的最左侧移动到数组的最右侧。
          * 你只可以看到在滑动窗口内的 k个数字。滑动窗口每次只向右移动一位。
@@ -270,6 +298,46 @@ class PlusOne {
         digits = new int[digits.length + 1];
         digits[0] = 1;
         return digits;
+    }
+}
+
+// 200. 岛屿数量
+class NumIslands {
+    public int numIslands(char[][] grid) {
+        int nums = 0;
+        int rows = grid.length;
+        int cols = grid[0].length;
+        int[][] used = new int[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == '1' && used[r][c] == 0) {
+                    dfs(r, c, grid, used);
+                    nums++;
+                }
+            }
+        }
+        return nums;
+    }
+
+    /**
+     * dfs 工具函数
+     *
+     * @param ir 起始点所在行
+     * @param ic 起始点所在列
+     */
+    void dfs(int ir, int ic, char[][] grid, int[][] used) {
+        used[ir][ic] = 1;
+        // 模拟上下左右运动
+        int[] dir = new int[]{-1, 0, 1, 0, -1};
+        for (int i = 0; i < 4; i++) {
+            int nextRow = ir + dir[i];
+            int nextCol = ic + dir[i + 1];
+            if (0 <= nextRow && nextRow < grid.length && 0 <= nextCol && nextCol < grid[0].length) {
+                if (grid[nextRow][nextCol] == '1' && used[nextRow][nextCol] == 0) {
+                    dfs(ir + dir[i], ic + dir[i + 1], grid, used);
+                }
+            }
+        }
     }
 }
 

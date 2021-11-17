@@ -50,7 +50,6 @@ public class JzOffer {
                 671, 433, 630, 425, 930, 64, 266, 235, 187, 284, 665, 874, 80, 45, 848, 38, 811, 267, 575};
         System.out.println(new InversePairs().inversePairs(nums));
 
-
         /**
          * JZ73 翻转单词序列
          * “nowcoder. a am I”
