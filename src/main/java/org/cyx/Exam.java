@@ -19,6 +19,35 @@ public class Exam {
         System.out.println(new Compress().compress(words));
 
         /**
+         * 2020.12.04 - 1 任务规划
+         * 任务列表tasks有 N 个任务，编号为 [0, N-1]
+         *     任务间存在互斥关系，记录在二维数组 mutexPairs中，现对tasks进行分割，问最少能分成几组
+         * ex:
+         *     tasks = [1,3,2,4,6,5,0], mutexPairs = [[1,3], [4,5]]
+         * out: 3
+         *     [1], [3,2,4,6], [5,0] 是其中一种解法
+         * @sin 2021.12.01 22:14
+         * @end 2021.12.01 23:05
+         */
+        PrintUtil.printTitle("2020.12.04 - 1 任务规划");
+        int[] tasks1204 = new int[]{1, 3, 2, 4, 6, 5, 0};
+        int[][] mutexPairs = new int[][]{{1, 3}, {4, 5}, {5, 2}};
+        System.out.println(new TaskCut().taskCut(tasks1204, mutexPairs));
+
+        /**
+         * 2021.03.05 - 1 最长空闲内存
+         * @sin 2021.12.01 23:20
+         * @end 2021.12.01 23:59
+         */
+        PrintUtil.printTitle("2021.03.05 - 1 最长空闲内存");
+        String memory0305_1 = "..x..x..xx...";
+        String memory0305_2 = "....x.";
+        String memory0305_3 = "xxxxx";
+        System.out.println(new MaxIdleMemory().maxIdleMemory(memory0305_1, 2));
+        System.out.println(new MaxIdleMemory().maxIdleMemory(memory0305_2, 2));
+        System.out.println(new MaxIdleMemory().maxIdleMemory(memory0305_3, 0));
+
+        /**
          * 07.23-1 展厅合适人数上限
          * 总预约人数上限，以及各展厅预约人数。设置一个上限，使得总预约人数小于total
          * @sin 2021.11.17 00:00
@@ -76,6 +105,55 @@ class Compress {
                     String.join("", Collections.nCopies(times, s[1])));
         }
         return words;
+    }
+}
+
+// 2020.12.04 - 1 任务规划
+class TaskCut {
+    public int taskCut(int[] tasks, int[][] mutexPairs) {
+        List<Integer> muteList = new ArrayList<>();
+        int res = 1;
+        for (int task : tasks) {
+            for (int k = 0; k < muteList.size(); k++) {
+                if (task == muteList.get(k)) {
+                    res++;
+                    muteList.clear();
+                }
+            }
+            for (int[] mutexPair : mutexPairs) {
+                if (mutexPair[0] == task) {
+                    muteList.add(mutexPair[1]);
+                }
+                if (mutexPair[1] == task) {
+                    muteList.add(mutexPair[0]);
+                }
+            }
+        }
+        return res;
+    }
+}
+
+// 2021.03.05 - 1 最长空闲内存
+class MaxIdleMemory {
+    public int maxIdleMemory(String memory, int cnt) {
+        // 左右指针
+        int l = 0;
+        int r = 0;
+        int numOfX = 0;
+        int maxLen = 0;
+        while (r < memory.length()) {
+            if (memory.charAt(r) == 'x') {
+                numOfX++;
+            }
+            while (numOfX > cnt) {
+                if (memory.charAt(l++) == 'x') {
+                    numOfX--;
+                }
+            }
+            maxLen = Math.max(maxLen, r - l + 1);
+            r++;
+        }
+        return maxLen;
     }
 }
 

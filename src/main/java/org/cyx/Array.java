@@ -51,6 +51,28 @@ public class Array {
         System.out.println(new RemoveDuplicates().removeDuplicates(nums26));
 
         /**
+         * 36. 有效的数独
+         * 请你判断一个9 x 9 的数独是否有效。只需要 根据以下规则 ，验证已经填入的数字是否有效即可。
+         *   数字1-9在每一行只能出现一次。
+         *   数字1-9在每一列只能出现一次。
+         *   数字1-9在每一个以粗实线分隔的3x3宫内只能出现一次。（请参考示例图）
+         * @sin 2021.12.01 21:04
+         * @end 2021.12.01 21:41
+         */
+        PrintUtil.printTitle("36. 有效的数独");
+        char[][] board36 = new char[][]{
+                {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+                {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+                {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+                {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+                {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+                {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+                {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+                {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+                {'.', '.', '.', '.', '8', '.', '.', '7', '9'}};
+        System.out.println(new IsValidSudoku().isValidSudoku(board36));
+
+        /**
          * 45. 跳跃游戏 II
          * 给你一个非负整数数组nums ，你最初位于数组的第一个位置。
          * 数组中的每个元素代表你在该位置可以跳跃的最大长度。
@@ -199,6 +221,33 @@ class RemoveDuplicates {
             }
         }
         return l + 1;
+    }
+}
+
+// 36. 有效的数独
+class IsValidSudoku {
+    public boolean isValidSudoku(char[][] board) {
+        // row: idx表示当前所在行。row[idx] 的int值的各个位表示某值是否在第idx行出现。1表示出现
+        int[] row = new int[10];
+        int[] col = new int[10];
+        int[] blk = new int[10];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') {
+                    continue;
+                }
+                int num = board[i][j] - '0';
+                int blkIdx = (i / 3) * 3 + j / 3;
+                // 行、列、块中是否已经有此num了
+                if (((row[i] >> num) & 1) == 1 || ((col[j] >> num) & 1) == 1 || ((blk[blkIdx] >> num) & 1) == 1) {
+                    return false;
+                }
+                row[i] |= (1 << num);
+                col[j] |= (1 << num);
+                blk[blkIdx] |= (1 << num);
+            }
+        }
+        return true;
     }
 }
 
