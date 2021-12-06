@@ -67,24 +67,38 @@ public class Exam {
         PrintUtil.printTitle("2021.09.03 - 2 船票预订系统设计");
         int[] ticket = new int[]{10, 1};
         TicketSystem ts = new TicketSystem(ticket);
-        System.out.println(ts.book(71, 0, 2));      // true
-        System.out.println(ts.book(73, 0, 10));     // false
-        System.out.println(ts.book(72, 0, 2));      // true
-        System.out.println(ts.query(72));                        // 2
-        System.out.println(ts.book(74, 0, 2));      // true
-        System.out.println(ts.cancel(73));                       // true
-        System.out.println(ts.query(74));                        // 4
-        System.out.println(ts.query(72));                        // 2
-        System.out.println(ts.cancel(72));                       // true
-        System.out.println(ts.book(75, 0, 3));      // true
-        System.out.println(ts.query(75));                        // 2
-        System.out.println(ts.cancel(75));                       // true
-        System.out.println(ts.book(76, 0, 2));      // true
-        System.out.println(ts.book(77, 0, 2));      // true
-        System.out.println(ts.query(77));                        // 6
-        System.out.println(ts.cancel(76));                       // true
-        System.out.println(ts.book(78, 0, 3));      // true
-        System.out.println(ts.query(78));                        // 2
+        // example 1
+//        System.out.println(ts.book(71, 0, 2));      // true
+//        System.out.println(ts.book(73, 0, 10));     // false
+//        System.out.println(ts.book(72, 0, 2));      // true
+//        System.out.println(ts.query(72));                        // 2
+//        System.out.println(ts.book(74, 0, 2));      // true
+//        System.out.println(ts.cancel(73));                       // true
+//        System.out.println(ts.query(74));                        // 4
+//        System.out.println(ts.query(72));                        // 2
+//        System.out.println(ts.cancel(72));                       // true
+//        System.out.println(ts.book(75, 0, 3));      // true
+//        System.out.println(ts.query(75));                        // 2
+//        System.out.println(ts.cancel(75));                       // true
+//        System.out.println(ts.book(76, 0, 2));      // true
+//        System.out.println(ts.book(77, 0, 2));      // true
+//        System.out.println(ts.query(77));                        // 6
+//        System.out.println(ts.cancel(76));                       // true
+//        System.out.println(ts.book(78, 0, 3));      // true
+//        System.out.println(ts.query(78));                        // 2
+
+        // example 2
+        System.out.println(ts.book(71, 0, 10));      // true
+        System.out.println(ts.book(72, 0, 1));       // false
+        System.out.println(ts.book(73, 0, 2));       // false
+        System.out.println(ts.book(74, 0, 3));       // false
+        System.out.println(ts.book(75, 0, 4));       // false
+        System.out.println(ts.cancel(71));                        // true
+        System.out.println(ts.query(72));                         // 0
+        System.out.println(ts.query(73));                         // 1
+        System.out.println(ts.query(74));                         // 3
+        System.out.println(ts.query(75));                         // 6
+
 
         /**
          * 10.22-1 子字符串个数
@@ -283,6 +297,13 @@ class TicketSystem {
             }
             // 重置id 对应canbinId
             books[id] = -1;
+            while (wq[cabinId].list.size() >0 && (surplusEachCab[cabinId] >= wq[cabinId].list.getFirst().num)) {
+                int num = wq[cabinId].list.getFirst().num;
+                int temp = num;
+                // 大于，则置desk[cabin]相应座位为id（id为全局唯一）
+                help(wq[cabinId].list.getFirst().id, cabinId, num, temp);
+                wq[cabinId].list.removeFirst();
+            }
         } else {
             // 在候补队列里
             int cabinId = inWaitDeq(id);
