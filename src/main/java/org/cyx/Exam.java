@@ -59,6 +59,34 @@ public class Exam {
         System.out.println(new MaxLimit().maxLimit(max0723, nums));
 
         /**
+         * 2021.09.03 - 2 船票预订系统设计
+         *
+         * @sin 2021.12.04 23:50
+         * @end 2021.12.07 00:44
+         */
+        PrintUtil.printTitle("2021.09.03 - 2 船票预订系统设计");
+        int[] ticket = new int[]{10, 1};
+        TicketSystem ts = new TicketSystem(ticket);
+        System.out.println(ts.book(71, 0, 2));      // true
+        System.out.println(ts.book(73, 0, 10));     // false
+        System.out.println(ts.book(72, 0, 2));      // true
+        System.out.println(ts.query(72));                        // 2
+        System.out.println(ts.book(74, 0, 2));      // true
+        System.out.println(ts.cancel(73));                       // true
+        System.out.println(ts.query(74));                        // 4
+        System.out.println(ts.query(72));                        // 2
+        System.out.println(ts.cancel(72));                       // true
+        System.out.println(ts.book(75, 0, 3));      // true
+        System.out.println(ts.query(75));                        // 2
+        System.out.println(ts.cancel(75));                       // true
+        System.out.println(ts.book(76, 0, 2));      // true
+        System.out.println(ts.book(77, 0, 2));      // true
+        System.out.println(ts.query(77));                        // 6
+        System.out.println(ts.cancel(76));                       // true
+        System.out.println(ts.book(78, 0, 3));      // true
+        System.out.println(ts.query(78));                        // 2
+
+        /**
          * 10.22-1 子字符串个数
          * 字符串 A 和 B，求 A 中包含 B 所有字符的子字符串的个数
          * 例如：012345678
@@ -139,15 +167,14 @@ class MaxIdleMemory {
         // 左右指针
         int l = 0;
         int r = 0;
-        int numOfX = 0;
         int maxLen = 0;
         while (r < memory.length()) {
             if (memory.charAt(r) == 'x') {
-                numOfX++;
+                cnt--;
             }
-            while (numOfX > cnt) {
+            while (cnt < 0) {
                 if (memory.charAt(l++) == 'x') {
-                    numOfX--;
+                    cnt++;
                 }
             }
             maxLen = Math.max(maxLen, r - l + 1);
@@ -196,6 +223,136 @@ class MaxLimit {
         }
         return sum;
     }
+}
+
+// 2021.09.03 - 2 船票预订系统设计
+class TicketSystem {
+    int[][] desk = new int[10][1000];
+    int[] maxDeskEachCab = new int[1000];
+    int[] surplusEachCab = new int[1000];
+    WaitDeq[] wq = new WaitDeq[10];
+    // 下标作为id，值作为该id所在cabinId；无则为-1
+    int[] books = new int[1000];
+    int numOfCab;
+
+    public TicketSystem(int[] cabins) {
+        numOfCab = cabins.length;
+        Arrays.fill(books, -1);
+        Arrays.fill(wq, new WaitDeq());
+        for (int i = 0; i < numOfCab; i++) {
+            Arrays.fill(desk[i], -1);
+            surplusEachCab[i] = cabins[i];
+        }
+        System.arraycopy(cabins, 0, maxDeskEachCab, 0, numOfCab);
+    }
+
+    public boolean book(int id, int cabinId, int num) {
+        // 剩余数量小于num，放入候补队列
+        int temp = num;
+        if (surplusEachCab[cabinId] < num) {
+            wq[cabinId].list.add(new MapNum(id, num));
+            return false;
+        }
+        // 大于，则置desk[cabin]相应座位为id（id为全局唯一）
+        help(id, cabinId, num, temp);
+        return true;
+    }
+
+    /**
+     * 取消
+     *
+     * @param id 订单号
+     * @return 是否取消成功
+     */
+    public boolean cancel(int id) {
+        boolean isInBooked = query(id) != -1; // 不等于 -1 则在预定系统里
+        boolean isInWq = inWaitDeq(id) != -1;
+        // 既不在预定系统也不在候补队列
+        if (!isInBooked && !isInWq) {
+            return false;
+        }
+        if (isInBooked) {
+            // 在预定系统里
+            int cabinId = books[id];
+            for (int i = 0; i < maxDeskEachCab[cabinId]; i++) {
+                if (desk[cabinId][i] == id) {
+                    // 重置为-1，并且canbin的剩余座位加一
+                    desk[cabinId][i] = -1;
+                    surplusEachCab[cabinId]++;
+                }
+            }
+            // 重置id 对应canbinId
+            books[id] = -1;
+        } else {
+            // 在候补队列里
+            int cabinId = inWaitDeq(id);
+            while (surplusEachCab[cabinId] >= wq[cabinId].list.getFirst().num) {
+                int num = wq[cabinId].list.getFirst().num;
+                int temp = num;
+                // 大于，则置desk[cabin]相应座位为id（id为全局唯一）
+                help(id, cabinId, num, temp);
+                wq[cabinId].list.removeFirst();
+            }
+        }
+        return true;
+    }
+
+    private void help(int id, int cabinId, int num, int temp) {
+        for (int k = 0; k < maxDeskEachCab[cabinId] && temp > 0; k++) {
+            if (desk[cabinId][k] == -1) {
+                desk[cabinId][k] = id;
+                temp--;
+            }
+        }
+        books[id] = cabinId;
+        surplusEachCab[cabinId] -= num;
+    }
+
+    public int query(int id) {
+        int cabinId = books[id];
+        if (cabinId != -1) {
+            for (int i = 0; i < maxDeskEachCab[cabinId]; i++) {
+                if (desk[books[id]][i] == id) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int inWaitDeq(int id) {
+        for (int i = 0; i < numOfCab; i++) {
+            for (MapNum m : wq[i].list) {
+                if (m.id == id) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    class WaitDeq {
+        Deque<MapNum> list = new LinkedList<>();
+//
+//        public void add(int idInput, int num) {
+//            list.add(new MapNum(idInput, num));
+//        }
+//
+//        public void delete(int idInput) {
+//            list.removeIf(m -> m.id == idInput);
+//        }
+    }
+
+    class MapNum {
+        int id;
+        int num;
+
+        public MapNum(int id, int num) {
+            this.id = id;
+            this.num = num;
+        }
+    }
+
 }
 
 // 1022 - 1 子字符串个数
