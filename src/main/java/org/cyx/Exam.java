@@ -59,9 +59,11 @@ public class Exam {
          */
         PrintUtil.printTitle("2021.03.05 - 3 整理仓库");
         int[] boxes_1 = new int[]{1, 1, 2, 1, 3};
+        int[] boxes_3 = new int[]{1, 2, 3, 5, 7, 9};
         int[] boxes_2 = new int[]{9, 8, 7, 6, 5, 4, 3, 2, 1};
         System.out.println(new ArrangeBoxes().arrangeBoxes(boxes_1));
         System.out.println(new ArrangeBoxes().arrangeBoxes(boxes_2));
+        System.out.println(new ArrangeBoxes().binSearch(boxes_3, 0, boxes_3.length, 4));
 
 
         /**
@@ -231,9 +233,9 @@ class ArrangeBoxes {
         int res = 0;
         for (int i = 0; i < len - 2; i++) {
             // 寻找 [l, r)
-            int l = binSearchFirst(sum, i + 1, len, 2 * sum[i]);
-            int r = binSearchLast(sum, i + 1, len,(sum[len - 1] + sum[i]) / 2);
-            if (l <= r) {
+            int l = binSearch(sum, i + 1, len, 2 * sum[i]);
+            int r = binSearch(sum, i + 1, len,(sum[len - 1] + sum[i]) / 2 + 1); // tip: find + 1：寻找第一个大于find的下标
+            if (l < r) {
                 res = res + r - l;
             }
             res %= YU;
@@ -241,36 +243,26 @@ class ArrangeBoxes {
         return res;
     }
 
-    public int binSearchFirst(int[] sum, int left, int right, int find) {
-        int mid = (left + right) / 2;
+    /**
+     * 寻找第一个大于等于某值的下标
+     *
+     * @param arr 递增数组
+     * @param left 左开始 [l, r)
+     * @param right 右结束 [l, r)
+     * @param find 要找的值
+     * @return 下标
+     */
+    public int binSearch(int[] arr, int left, int right, int find) {
+        int mid = -1;
         while (left < right) {
-            if (sum[mid] > find) {
-                right = mid - 1;                // tip
-                mid = (left + right) / 2;
-            } else if (sum[mid] < find) {
-                left = mid + 1;                 // tip
-                mid = (left + right) / 2;
-            } else {
-                return mid;
+            mid = (left + right) / 2;
+            if (arr[mid] >= find) {
+                right = mid;
+            } else if (arr[mid] < find) {
+                left = mid + 1;             // tip
             }
         }
-        return mid;
-    }
-
-    public int binSearchLast(int[] sum, int left, int right, int find) {
-        int mid = (left + right) / 2;
-        while (left < right) {
-            if (sum[mid] > find) {
-                right = mid - 1;                // tip
-                mid = (left + right) / 2;
-            } else if (sum[mid] < find) {
-                left = mid + 1;                 // tip
-                mid = (left + right) / 2;
-            } else {
-                return mid + 1;
-            }
-        }
-        return mid;
+        return left;
     }
 }
 
