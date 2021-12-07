@@ -48,7 +48,24 @@ public class Exam {
         System.out.println(new MaxIdleMemory().maxIdleMemory(memory0305_3, 0));
 
         /**
-         * 07.23-1 展厅合适人数上限
+         * 2021.03.05 - 3 整理仓库
+         * 将若干位置连续的货箱堆起，从左至右3堆，满足：
+         *    weight_left <= weight_mid <= weight_right
+         * 答案以 1e9 + 7 取余。
+         * 3 <= boxes.length <= 10^6
+         * 1 <= boxes[i] <=6
+         * @sin 2021.12.07 22:05
+         * @end 2021.12.07 22:
+         */
+        PrintUtil.printTitle("2021.03.05 - 3 整理仓库");
+        int[] boxes_1 = new int[]{1, 1, 2, 1, 3};
+        int[] boxes_2 = new int[]{9, 8, 7, 6, 5, 4, 3, 2, 1};
+        System.out.println(new ArrangeBoxes().arrangeBoxes(boxes_1));
+        System.out.println(new ArrangeBoxes().arrangeBoxes(boxes_2));
+
+
+        /**
+         * 2021.07.23 - 1 展厅合适人数上限
          * 总预约人数上限，以及各展厅预约人数。设置一个上限，使得总预约人数小于total
          * @sin 2021.11.17 00:00
          * @end 2021.11.17 01:10
@@ -198,7 +215,66 @@ class MaxIdleMemory {
     }
 }
 
-// 0723 - 1 展厅合适人数上限
+// 2021.03.05 - 3 整理货箱
+// [1, 2, 4, 5, 9]
+class ArrangeBoxes {
+
+    private static final int YU = 1000000007;
+
+    public int arrangeBoxes(int[] boxes) {
+        int len = boxes.length;
+        int[] sum = new int[len];
+        sum[0] = boxes[0];
+        for (int i = 1; i < len; i++) {
+            sum[i] = sum[i - 1] + boxes[i];
+        }
+        int res = 0;
+        for (int i = 0; i < len - 2; i++) {
+            // 寻找 [l, r)
+            int l = binSearchFirst(sum, i + 1, len, 2 * sum[i]);
+            int r = binSearchLast(sum, i + 1, len,(sum[len - 1] + sum[i]) / 2);
+            if (l <= r) {
+                res = res + r - l;
+            }
+            res %= YU;
+        }
+        return res;
+    }
+
+    public int binSearchFirst(int[] sum, int left, int right, int find) {
+        int mid = (left + right) / 2;
+        while (left < right) {
+            if (sum[mid] > find) {
+                right = mid - 1;                // tip
+                mid = (left + right) / 2;
+            } else if (sum[mid] < find) {
+                left = mid + 1;                 // tip
+                mid = (left + right) / 2;
+            } else {
+                return mid;
+            }
+        }
+        return mid;
+    }
+
+    public int binSearchLast(int[] sum, int left, int right, int find) {
+        int mid = (left + right) / 2;
+        while (left < right) {
+            if (sum[mid] > find) {
+                right = mid - 1;                // tip
+                mid = (left + right) / 2;
+            } else if (sum[mid] < find) {
+                left = mid + 1;                 // tip
+                mid = (left + right) / 2;
+            } else {
+                return mid + 1;
+            }
+        }
+        return mid;
+    }
+}
+
+// 2021.07.23 - 1 展厅合适人数上限
 class MaxLimit {
     public int maxLimit(int maxTotal, int[] nums) {
         int maxSingle = Integer.MIN_VALUE;
@@ -376,7 +452,7 @@ class TicketSystem {
 
 }
 
-// 1022 - 1 子字符串个数
+// 2021.10.22 - 1 子字符串个数
 class SubStr {
     public long subStr(String messages, String keys) {
         // window：实时记录当前子串中各个字符的个数
@@ -426,7 +502,7 @@ class SubStr {
     }
 }
 
-// 1022 - 2 实验室预约系统
+// 2021.10.22 - 2 实验室预约系统
 class BookinSystem {
     // 存放实验室 & 实验室开放的时段
     private final Map<Integer, List<Integer[]>> labMap = new HashMap<>();
@@ -481,7 +557,7 @@ class BookinSystem {
 //    }
 }
 
-// 1022 - 3 最便宜往返机票
+// 2021.10.22 - 3 最便宜往返机票
 class CheapestTicket {
     public int[] cheapestTicket(int[] goArr, int[] rtArr, int minDays, int maxDays) {
         // 停留的第min & max天之间的最便宜的返程机票的【坐标】
