@@ -178,6 +178,24 @@ public class Array {
         int[] nums239 = new int[]{1, 3, -1, -3, 5, 3, 6, 7};
         Arrays.stream(new MaxSlidingWindow().maxSlidingWindow(nums239, 3)).forEach(System.out::println);
 
+        /**
+         * 874. 模拟行走机器人
+         * 机器人在一个无限大小的 XY 网格平面上行走，从点(0, 0) 处开始出发，面向北方。该机器人可以接收以下三种类型的命令 commands ：
+         *     -2 ：向左转90 度
+         *     -1 ：向右转 90 度
+         *     1 <= x <= 9 ：向前移动x个单位长度
+         * 在网格上有一些格子被视为障碍物obstacles 。第 i个障碍物位于网格点 obstacles[i] = (xi, yi) 。
+         * 机器人无法走到障碍物上，它将会停留在障碍物的前一个网格方块上，但仍然可以继续尝试进行该路线的其余部分。
+         * 返回从原点到机器人所有经过的路径点（坐标为整数）的最大欧式距离的平方。
+         * @sin 2021.12.13 23:15
+         * @end 2021.12.13 23:50
+         */
+        PrintUtil.printTitle("874. 模拟行走机器人");
+        int[] cmd = new int[]{4, -1, 4, -2, 4};
+        int[][] obs = new int[][]{
+                {2,4}
+        };
+        System.out.println(new RobotSim().robotSim(cmd, obs));
     }
 
 }
@@ -284,7 +302,6 @@ class CanJump {
         return false;
     }
 }
-
 
 // 62. 不同的路径
 class UniquePaths {
@@ -419,5 +436,47 @@ class MaxSlidingWindow {
             deque.pollLast();
         }
         deque.add(val);
+    }
+}
+
+// 874. 模拟行走机器人
+class RobotSim {
+    public int robotSim(int[] commands, int[][] obstacles) {
+        // tip：用两个数组表示方向：N, E, S, W
+        int[] dx = new int[]{0, 1, 0, -1};
+        int[] dy = new int[]{1, 0, -1, 0};
+        int di = 0;                         // 方向坐标，初始为北方
+        int ret = 0;
+        int x = 0;
+        int y = 0;
+
+        // tip: 将障碍物坐标编码为字符串"x+y"，避免后续寻找障碍物时遍历障碍物数组
+        Set<String> ob = new HashSet<>();
+        for (int[] o : obstacles) {
+            ob.add("" + o[0] + "+" + o[1]);
+        }
+
+        // 遍历cmd
+        for (int c : commands) {
+            if (c == -1) {          // 右转
+                di = di + 1 == 4 ? 0 : di + 1;
+            } else if (c == -2) {   // 左转
+                di = di - 1 == -1 ? 3 : di - 1;
+            } else {                // 走
+                for (int k = 0; k < c; k++) {
+                    // 每走一步，x & y在其方向上加上步数
+                    x += dx[di];
+                    y += dy[di];
+                    if (ob.contains("" + x + "+" + y)) {
+                        x -= dx[di];
+                        y -= dy[di];
+                        break;
+                    }
+                    // 不处在障碍物时，计算最大欧式距离
+                    ret = Math.max(ret, x * x + y * y);
+                }
+            }
+        }
+        return ret;
     }
 }

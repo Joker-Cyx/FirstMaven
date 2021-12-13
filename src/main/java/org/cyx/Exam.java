@@ -35,6 +35,19 @@ public class Exam {
         System.out.println(new TaskCut().taskCut(tasks1204, mutexPairs));
 
         /**
+         * 2020.12.11 - 2 结果对比
+         * 每位工人都想计算同行同列中一共多少人比自己完成的件数多，返回此数组
+         * @sin 2021.12.12 23:50
+         * @end 2021.12.13
+         */
+        PrintUtil.printTitle("2020.12.11 - 2 结果对比");
+        int[][] scores = new int[][]{
+                {10, 20, 30},
+                {30, 15, 10}
+        };
+        new ScoresCompare().scoresCompare(scores);
+
+        /**
          * 2021.03.05 - 1 最长空闲内存
          * @sin 2021.12.01 23:20
          * @end 2021.12.01 23:59
@@ -61,10 +74,11 @@ public class Exam {
         int[] boxes_1 = new int[]{1, 1, 2, 1, 3};
         int[] boxes_3 = new int[]{1, 2, 3, 5, 7, 9};
         int[] boxes_2 = new int[]{9, 8, 7, 6, 5, 4, 3, 2, 1};
+        int[] boxes_4 = new int[]{9, 9, 9, 9, 9, 9, 9, 9, 9};
         System.out.println(new ArrangeBoxes().arrangeBoxes(boxes_1));
         System.out.println(new ArrangeBoxes().arrangeBoxes(boxes_2));
-        System.out.println(new ArrangeBoxes().binSearch(boxes_3, 0, boxes_3.length, 4));
-
+        System.out.println(new ArrangeBoxes().binSearch(boxes_3, 0, boxes_3.length, 5));
+        System.out.println(new ArrangeBoxes().binSearch(boxes_4, 0, boxes_4.length, 9));
 
         /**
          * 2021.07.23 - 1 展厅合适人数上限
@@ -72,7 +86,7 @@ public class Exam {
          * @sin 2021.11.17 00:00
          * @end 2021.11.17 01:10
          */
-        PrintUtil.printTitle("07.23-1 展厅合适人数上限");
+        PrintUtil.printTitle("2021.07.23-1 展厅合适人数上限");
         int max0723 = 4;
         int[] nums = new int[]{1, 2, 3, 4, 5};
         System.out.println(new MaxLimit().maxLimit(max0723, nums));
@@ -117,7 +131,6 @@ public class Exam {
         System.out.println(ts.query(73));                         // 1
         System.out.println(ts.query(74));                         // 3
         System.out.println(ts.query(75));                         // 6
-
 
         /**
          * 10.22-1 子字符串个数
@@ -194,6 +207,25 @@ class TaskCut {
     }
 }
 
+// 2020.12.11 - 2 结果对比
+class ScoresCompare {
+
+    private static final int MAX_NUM = 10 << 2;
+
+    public int[][] scoresCompare(int[][] scores) {
+        int r = scores.length;
+        int c = scores[0].length;
+        int[][] ret = new int[r][c];
+        int[] tmpRow = new int[c];
+        int[] tmpCol = new int[r];
+        int[] myMap = new int[MAX_NUM];
+        for (int i = 0; i < c; i++) {
+
+        }
+        return ret;
+    }
+}
+
 // 2021.03.05 - 1 最长空闲内存
 class MaxIdleMemory {
     public int maxIdleMemory(String memory, int cnt) {
@@ -218,7 +250,6 @@ class MaxIdleMemory {
 }
 
 // 2021.03.05 - 3 整理货箱
-// [1, 2, 4, 5, 9]
 class ArrangeBoxes {
 
     private static final int YU = 1000000007;
@@ -244,19 +275,19 @@ class ArrangeBoxes {
     }
 
     /**
-     * 寻找第一个大于等于某值的下标
+     * 不减数组（ni+1 >= ni)的 [left, right) 范围中寻找第一个大于等于某值的下标，若没有，返回right值
      *
-     * @param arr 递增数组
-     * @param left 左开始 [l, r)
+     * @param arr   递增数组
+     * @param left  左开始 [l, r)
      * @param right 右结束 [l, r)
-     * @param find 要找的值
+     * @param find  要找的值
      * @return 下标
      */
     public int binSearch(int[] arr, int left, int right, int find) {
         int mid = -1;
         while (left < right) {
             mid = (left + right) / 2;
-            if (arr[mid] >= find) {
+            if (arr[mid] >= find) {         // tip，‘=’时也不要这个mid坐标了
                 right = mid;
             } else if (arr[mid] < find) {
                 left = mid + 1;             // tip
