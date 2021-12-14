@@ -167,6 +167,15 @@ public class Array {
         System.out.println(new NumIslands().numIslands(grid200_3));
 
         /**
+         * 215. 数组中的第K个最大元素
+         * @sin 2021.12.15 00：10
+         * @end 2021.12.15 00:
+         */
+        PrintUtil.printTitle("215. 数组中的第K个最大元素");
+        int[] nums215 = new int[]{6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
+        System.out.println(new FindKthLargest().partition(nums215, 0, nums215.length - 1));
+
+        /**
          * 239. 滑动窗口最大值
          * 给你一个整数数组 nums，有一个大小为k的滑动窗口从数组的最左侧移动到数组的最右侧。
          * 你只可以看到在滑动窗口内的 k个数字。滑动窗口每次只向右移动一位。
@@ -404,6 +413,43 @@ class NumIslands {
                 }
             }
         }
+    }
+}
+
+// 215. 数组中的第K个最大元素
+class FindKthLargest {
+    public int findKthLargest(int[] nums, int k) {
+        return 0;
+    }
+
+    /**
+     * 快速排序的part帮助函数
+     *
+     * @param nums  待分隔数组
+     * @param left  左边界，初始所选的值
+     * @param right 右边界
+     * @return 返回最终分隔所在的下标
+     */
+    public int partition(int[] nums, int left, int right) {
+        int idx = left;
+        int vi = nums[idx];
+        while (left < right) {
+            while (nums[right] > vi && right > left) {
+                right--;
+            }
+            while (nums[left] <= vi && right > left) {
+                left++;
+            }
+            swap(nums, left, right);
+        }
+        swap(nums, idx, left);
+        return left;
+    }
+
+    void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
     }
 }
 
