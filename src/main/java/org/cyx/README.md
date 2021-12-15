@@ -32,9 +32,17 @@ https://blog.csdn.net/weixin_38118016/article/details/90761111
 
 ## 3. 常见技巧
 ### 3.1 二维坐标方位 **
-          N  E  S   W
-    dx = [0, 1, 0, -1]
-    dy = [1, 0, -1, 0]
+    Tip.1
+              N  E  S   W
+        dx = [0, 1, 0, -1]
+        dy = [1, 0, -1, 0]
+    Tip.2
+        或者合并为一个 dir = [0, 1, 0, -1, 0]
+        for (int i = 0; i <=4; ++i) {
+            // 0 -> 1 表示 N, E, S ,W
+            nextRow = r + dir[i];
+            nextCol = r + dir[i + 1];
+        }
 ### 3.2 编码巧用 *
     合理使用编码，可以使得查询更加快速
     ex.
