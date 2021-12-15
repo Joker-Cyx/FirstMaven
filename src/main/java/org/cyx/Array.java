@@ -139,6 +139,35 @@ public class Array {
         Arrays.stream(new PlusOne().plusOne(digits66)).forEach(System.out::println);
 
         /**
+         * 84. 柱状图中最大的矩形
+         * 给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+         * 求在该柱状图中，能够勾勒出来的矩形的最大面积。
+         * @sin 2021.12.15 22:15
+         * @end 2021.12.15 23:10
+         */
+        PrintUtil.printTitle("84. 柱状图中最大的矩形");
+        int[] area84_1 = new int[]{2, 1, 5, 6, 2, 3};
+        int[] area84_2 = new int[]{2, 4};
+        System.out.println(new LargestRectangleArea().largestRectangleArea(area84_1));
+        System.out.println(new LargestRectangleArea().largestRectangleArea(area84_2));
+
+        /**
+         * 85. 最大矩形
+         * 给定一个仅包含 0 和 1 、大小为 rows x cols 的二维二进制矩阵，找出只包含 1 的最大矩形，并返回其面积。
+         * @sin 2021.12.15 23:15
+         * @end 2021.12.15 23:25
+         */
+        PrintUtil.printTitle("85. 最大矩形");
+        char[][] matrix85 = new char[][]{
+                {'1', '0', '1', '0', '0'},
+                {'1', '0', '1', '1', '1'},
+                {'1', '1', '1', '1', '1'},
+                {'1', '0', '0', '1', '0'}
+        };
+        System.out.println(new MaximalRectangle().maximalRectangle(matrix85));
+
+
+        /**
          * 200. 岛屿数量
          * 给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
          * @sin 2021.11.17 22:55
@@ -174,6 +203,9 @@ public class Array {
         PrintUtil.printTitle("215. 数组中的第K个最大元素");
         int[] nums215 = new int[]{6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
         System.out.println(new FindKthLargest().partition(nums215, 0, nums215.length - 1));
+        for (int i = 1; i <= nums215.length; i++) {
+            System.out.println("第" + i + "大的元素为: " + new FindKthLargest().findKthLargest(nums215, i));
+        }
 
         /**
          * 239. 滑动窗口最大值
@@ -376,6 +408,86 @@ class PlusOne {
     }
 }
 
+// 84. 柱状图中最大的矩形
+class LargestRectangleArea {
+    public int largestRectangleArea(int[] heights) {
+        int len = heights.length;
+        int[] r = new int[len];
+        int[] l = new int[len];
+        Arrays.fill(r, len);
+        Arrays.fill(l, -1);
+        // 单调不减队列，存放右（左）边第一个比当下高度矮的下标
+        Deque<Integer> st = new ArrayDeque<>();     // 使用Deque 比 Stack 快
+        for (int i = 0; i < len; i++) {
+            while (!st.isEmpty() && heights[st.getLast()] > heights[i]) {
+                r[st.pollLast()] = i;
+            }
+            st.add(i);
+        }
+        st.clear();
+        for (int i = len - 1; i >= 0; i--) {
+            while (!st.isEmpty() && heights[st.getLast()] > heights[i]) {
+                l[st.pollLast()] = i;
+            }
+            st.add(i);
+        }
+        int maxArea = Integer.MIN_VALUE;
+        for (int i = 0; i < len; i++) {
+            maxArea = Math.max(maxArea, heights[i] * (r[i] - l[i] - 1));
+        }
+        return maxArea;
+    }
+}
+
+// 85. 最大矩形
+class MaximalRectangle {
+
+    public int maximalRectangle(char[][] matrix) {
+        int[] heights = new int[matrix[0].length];
+        int maxRecArea = Integer.MIN_VALUE;
+        for (int r = 0; r < matrix.length; ++r) {
+            for (int c = 0; c < matrix[0].length; ++c) {
+                heights[c] = matrix[r][c] == '1' ? heights[c] + 1 : 0;  // 每一行可构成一个高度数组
+            }
+            maxRecArea = Math.max(largestRectangleArea(heights), maxRecArea);
+        }
+        return maxRecArea;
+    }
+
+    /**
+     * 一个高度数组，求其中可构成的最大的矩形面积，见LC.84
+     *
+     * @param heights 高度数组
+     * @return 最大可构成的矩形面积
+     */
+    private int largestRectangleArea(int[] heights) {
+        int len = heights.length;
+        int[] r = new int[len];
+        int[] l = new int[len];
+        Arrays.fill(r, len);
+        Arrays.fill(l, -1);
+        Deque<Integer> st = new ArrayDeque<>();     // 使用Deque 比 Stack 快
+        for (int i = 0; i < len; i++) {
+            while (!st.isEmpty() && heights[st.getLast()] > heights[i]) {
+                r[st.pollLast()] = i;
+            }
+            st.add(i);
+        }
+        st.clear();
+        for (int i = len - 1; i >= 0; i--) {
+            while (!st.isEmpty() && heights[st.getLast()] > heights[i]) {
+                l[st.pollLast()] = i;
+            }
+            st.add(i);
+        }
+        int maxArea = Integer.MIN_VALUE;
+        for (int i = 0; i < len; i++) {
+            maxArea = Math.max(maxArea, heights[i] * (r[i] - l[i] - 1));
+        }
+        return maxArea;
+    }
+}
+
 // 200. 岛屿数量
 class NumIslands {
     public int numIslands(char[][] grid) {
@@ -419,25 +531,36 @@ class NumIslands {
 // 215. 数组中的第K个最大元素
 class FindKthLargest {
     public int findKthLargest(int[] nums, int k) {
-        return 0;
+        int left = 0;
+        int right = nums.length - 1;
+        int i = partition(nums, left, right);
+        while (i != k - 1) {
+            if (i > k - 1) {
+                right = i - 1;
+            } else if (i < k - 1) {
+                left = i + 1;
+            }
+            i = partition(nums, left, right);
+        }
+        return nums[i];
     }
 
     /**
      * 快速排序的part帮助函数
      *
      * @param nums  待分隔数组
-     * @param left  左边界，初始所选的值
-     * @param right 右边界
+     * @param left  左边界下标，初始所选的值
+     * @param right 右边界下标 [left, right]
      * @return 返回最终分隔所在的下标
      */
     public int partition(int[] nums, int left, int right) {
         int idx = left;
         int vi = nums[idx];
         while (left < right) {
-            while (nums[right] > vi && right > left) {
+            while (nums[right] < vi && right > left) {
                 right--;
             }
-            while (nums[left] <= vi && right > left) {
+            while (nums[left] >= vi && right > left) {
                 left++;
             }
             swap(nums, left, right);
